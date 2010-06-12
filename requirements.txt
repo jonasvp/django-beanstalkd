@@ -1,0 +1,4 @@
+# pip requirements file
+pyyaml
+beanstalkc
+
