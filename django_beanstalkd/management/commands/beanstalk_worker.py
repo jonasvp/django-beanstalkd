@@ -1,3 +1,4 @@
+import logging
 from optparse import make_option
 import os
 import sys
@@ -104,9 +105,20 @@ class Command(NoArgsCommand):
                 job = beanstalk.reserve()
                 job_name = job.stats()['tube']
                 if job_name in self.jobs:
-                    #print "Calling %s with arg: %s" % (job_name, job.body)
-                    self.jobs[job_name](job.body)
-                    job.delete()
+                    logging.debug("Calling %s with arg: %s" % (job_name, job.body))
+                    try:
+                        self.jobs[job_name](job.body)
+                    except Exception, e:
+                        logging.error('Error while calling "%s" with arg "%s": '
+                            '%s' % (
+                                job_name,
+                                job.body,
+                                e,
+                            )
+                        )
+                        job.bury()
+                    else:
+                        job.delete()
                 else:
                     job.release()
             
