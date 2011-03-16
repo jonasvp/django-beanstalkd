@@ -18,7 +18,8 @@ class beanstalk_job(object):
         # store function in per-app job list (to be picked up by a worker)
         bs_module = __import__(f.__module__)
         try:
-            bs_module.beanstalk_job_list.append(self)
+            if self not in bs_module.beanstalk_job_list:
+                bs_module.beanstalk_job_list.append(self)
         except AttributeError:
             bs_module.beanstalk_job_list = [self]
 

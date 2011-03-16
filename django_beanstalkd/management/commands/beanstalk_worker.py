@@ -34,10 +34,9 @@ class Command(NoArgsCommand):
         jobs = []
         for bs_module in bs_modules:
             try:
-                bs_module.beanstalk_job_list
+                jobs += bs_module.beanstalk_job_list
             except AttributeError:
-                continue
-            jobs += bs_module.beanstalk_job_list
+                pass
         if not jobs:
             print "No beanstalk jobs found!"
             return
