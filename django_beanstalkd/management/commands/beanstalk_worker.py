@@ -2,6 +2,7 @@ import logging
 from optparse import make_option
 import os
 import sys
+import traceback
 
 from django.conf import settings
 from django.core.management.base import NoArgsCommand
@@ -117,6 +118,7 @@ class Command(NoArgsCommand):
                     try:
                         self.jobs[job_name](job.body)
                     except Exception, e:
+                        tp, value, tb = sys.exc_info()
                         logger.error('Error while calling "%s" with arg "%s": '
                             '%s' % (
                                 job_name,
@@ -124,6 +126,8 @@ class Command(NoArgsCommand):
                                 e,
                             )
                         )
+                        logger.debug("%s:%s" % (tp.__name__, value))
+                        logger.debug("\n".join(traceback.format_tb(tb)))
                         job.bury()
                     else:
                         job.delete()
