@@ -33,7 +33,9 @@ class Command(NoArgsCommand):
         bs_modules = []
         for app in settings.INSTALLED_APPS:
             try:
-                bs_modules.append(__import__("%s.beanstalk_jobs" % app))
+                modname = "%s.beanstalk_jobs" % app
+                __import__(modname)
+                bs_modules.append(sys.modules[modname])
             except ImportError:
                 pass
         if not bs_modules:
@@ -108,7 +110,7 @@ class Command(NoArgsCommand):
         for job in self.jobs.keys():
             beanstalk.watch(job)
         beanstalk.ignore('default')
-        
+
         try:
             while True:
                 job = beanstalk.reserve()
@@ -133,6 +135,6 @@ class Command(NoArgsCommand):
                         job.delete()
                 else:
                     job.release()
-            
+
         except KeyboardInterrupt:
             sys.exit(0)
