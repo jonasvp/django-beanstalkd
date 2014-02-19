@@ -21,7 +21,7 @@ Installation
 ------------
 It's the same for both the client and worker instances of your django project:
 
-    pip install -e git://github.com/jonasvp/django-beanstalkd.git#egg=django-beanstalkd
+    pip install -e git+https://github.com/jonasvp/django-beanstalkd.git#egg=django-beanstalkd
 
 Add ``django_beanstalkd`` to the `INSTALLED_APPS` section of `settings.py`.
 
